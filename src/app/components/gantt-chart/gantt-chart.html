@@ -1,0 +1,53 @@
+<div class="gantt-wrapper" [style.background]="config().backgroundColor">
+  <h2 class="gantt-title" [style.color]="config().textColor">{{ config().title }}
+    <span class="scale-badge">{{ effectiveTimeScale() }}</span>
+  </h2>
+
+  <div class="gantt-container" [style.fontSize.px]="config().fontSize">
+    <!-- Header -->
+    <div class="gantt-header-row" [style.background]="config().headerColor">
+      <div class="participant-header">Participante / Tarea</div>
+      <div class="timeline-header">
+        @for (col of timeColumns(); track trackByColumn($index, col)) {
+          <div class="time-col" [style.width.px]="col.width" [style.border-left]="config().showGrid ? '1px solid ' + config().gridColor : 'none'">
+            <span class="col-label">{{ col.label }}</span>
+            <span class="col-sublabel">{{ col.sublabel }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Cascade Rows - one row per task -->
+    @for (task of tasks(); track trackByTaskId($index, task)) {
+      <div class="gantt-row task-row" [style.border-bottom]="config().showGrid ? '1px solid ' + config().gridColor : 'none'"
+           [style.height.px]="config().barHeight + 20">
+        <div class="task-label-cell" [style.color]="getParticipantColor(task.participantId)">
+          <span class="participant-name">{{ getParticipantForTask(task.id)?.name || 'Unknown' }}</span>
+          <span class="task-name">{{ task.name }}</span>
+        </div>
+        <div class="timeline-cell" [style.border-left]="config().showGrid ? '1px solid ' + config().gridColor : 'none'">
+          <div class="task-bar"
+               [style]="getTaskStyle(task)"
+               [style.border-radius.px]="config().barRadius"
+               [style.height.px]="config().barHeight">
+            <span class="task-label">{{ task.name }} ({{ task.progress }}%)</span>
+            <div class="task-progress" [style.width.%]="task.progress" [style.background]="getParticipantColor(task.participantId) + '80'"></div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @empty {
+      <div class="no-tasks">
+        <p>No hay tareas registradas. Agrega participantes y tareas para visualizar el diagrama.</p>
+      </div>
+    }
+
+    <!-- Today marker -->
+    @if (config().showToday && isTodayVisible()) {
+      <div class="today-marker"
+           [style.left.px]="getTodayLeft()">
+      </div>
+    }
+  </div>
+</div>

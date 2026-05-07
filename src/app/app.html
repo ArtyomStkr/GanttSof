@@ -1,0 +1,44 @@
+<div class="app-container">
+  <header class="app-header">
+    <div class="header-content">
+      <img src="/LOGO_COSSMIL.png" alt="COSSMIL Logo" class="logo">
+      <div class="header-text">
+        <h1>Generador de Diagramas Gantt - COSSMIL</h1>
+        <p class="subtitle">Corporación del Seguro Social Militar</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <aside class="sidebar">
+      <nav class="tab-nav">
+        <button class="tab-btn" [class.active]="activeTab === 'participants'" (click)="setTab('participants')">
+          Participantes
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'tasks'" (click)="setTab('tasks')">
+          Tareas
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'config'" (click)="setTab('config')">
+          Configuración
+        </button>
+      </nav>
+
+      <div class="tab-content">
+        @if (activeTab === 'participants') {
+          <app-participant-form />
+        } @else if (activeTab === 'tasks') {
+          <app-task-form />
+        } @else if (activeTab === 'config') {
+          <app-config-panel />
+        }
+      </div>
+    </aside>
+
+    <main class="gantt-main">
+      <app-gantt-chart />
+      <app-task-table />
+    </main>
+  </div>
+</div>
+
+<router-outlet />

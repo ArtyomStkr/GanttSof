@@ -1,0 +1,69 @@
+<div class="config-panel">
+  <h3>Configuración</h3>
+
+  <div class="form-group">
+    <label>Título del proyecto:</label>
+    <input type="text" [value]="config().title" (input)="updateTitle($event)">
+  </div>
+
+  <div class="form-group">
+    <label>Escala de tiempo: {{ effectiveScale() }}</label>
+    <select [value]="config().timeScale" (change)="updateTimeScale($event)">
+      <option value="days">Días (<= 31 días)</option>
+      <option value="weeks">Semanas (32-120 días)</option>
+      <option value="months">Meses (> 120 días)</option>
+    </select>
+    <label class="checkbox-label">
+      <input type="checkbox" [checked]="config().autoScale" (change)="toggleAutoScale()">
+      Auto-escala basada en duración
+    </label>
+  </div>
+
+  <div class="form-group">
+    <label>Altura de barras: {{ config().barHeight }}px</label>
+    <input type="range" min="20" max="60" [value]="config().barHeight" (input)="updateBarHeight($event)">
+  </div>
+
+  <div class="form-group">
+    <label>Tamaño de fuente: {{ config().fontSize }}px</label>
+    <input type="range" min="10" max="16" [value]="config().fontSize" (input)="updateFontSize($event)">
+  </div>
+
+  <div class="form-group">
+    <label>Color de cuadrícula:</label>
+    <input type="color" [value]="config().gridColor" (input)="updateGridColor($event)">
+  </div>
+
+  <div class="form-group checkbox-group">
+    <label>
+      <input type="checkbox" [checked]="config().showGrid" (change)="toggleGrid()">
+      Mostrar cuadrícula
+    </label>
+  </div>
+
+  <div class="form-group checkbox-group">
+    <label>
+      <input type="checkbox" [checked]="config().showWeekends" (change)="toggleWeekends()">
+      Resaltar fines de semana
+    </label>
+  </div>
+
+  <div class="form-group checkbox-group">
+    <label>
+      <input type="checkbox" [checked]="config().showToday" (change)="toggleToday()">
+      Mostrar marcador de hoy
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn-action btn-export" (click)="exportJSON()">Exportar JSON</button>
+    <label class="btn-action btn-import">
+      Importar JSON
+      <input type="file" accept=".json" (change)="importJSON($event)" style="display: none;">
+    </label>
+  </div>
+
+  <button class="btn-print" (click)="printGantt()">Imprimir Diagrama</button>
+
+  <button class="btn-danger-full" (click)="clearData()">Eliminar Todos los Datos</button>
+</div>

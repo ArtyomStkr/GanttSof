@@ -1,0 +1,39 @@
+<div class="participant-form">
+  <h3>Participantes</h3>
+
+  <div class="form-group">
+    <label>Nombre:</label>
+    <input type="text" [value]="name()" (input)="name.set($event.target.value)" placeholder="Nombre del participante">
+  </div>
+
+  <div class="form-group">
+    <label>Color:</label>
+    <div class="color-picker">
+      @for (color of predefinedColors; track color) {
+        <div class="color-option"
+             [style.background]="color"
+             [class.selected]="selectedColor() === color"
+             (click)="selectedColor.set(color)">
+        </div>
+      }
+    </div>
+  </div>
+
+  <button class="btn-primary" (click)="addParticipant()">Agregar Participante</button>
+
+  <!-- Participants List -->
+  @if (participants().length > 0) {
+    <div class="participants-list">
+      <h4>Participantes registrados:</h4>
+      @for (p of participants(); track trackById($index, p)) {
+        <div class="participant-item">
+          <div class="participant-info">
+            <span class="color-dot" [style.background]="p.color"></span>
+            <span>{{ p.name }}</span>
+          </div>
+          <button class="btn-small btn-danger" (click)="removeParticipant(p.id)">×</button>
+        </div>
+      }
+    </div>
+  }
+</div>

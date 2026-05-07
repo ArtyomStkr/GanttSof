@@ -1,0 +1,41 @@
+<div class="task-table-container">
+  <h3>Detalle de Tareas</h3>
+
+  @if (tasks().length === 0) {
+    <p class="no-data">No hay tareas registradas.</p>
+  } @else {
+    <div class="table-wrapper">
+      <table class="task-table">
+        <thead>
+          <tr>
+            <th>Tarea</th>
+            <th>Responsable</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Duración (días)</th>
+            <th>Prioridad</th>
+            <th>Progreso</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of tasks(); track task.id) {
+            <tr>
+              <td><strong>{{ task.name }}</strong></td>
+              <td>{{ getParticipantName(task.participantId) }}</td>
+              <td>{{ task.startDate | date:'shortDate' }}</td>
+              <td>{{ task.endDate | date:'shortDate' }}</td>
+              <td>{{ (task.endDate.getTime() - task.startDate.getTime()) / (1000 * 60 * 60 * 24) + 1 }}</td>
+              <td><span class="priority-badge" [class]="getPriorityClass(task.priority)">{{ getPriorityLabel(task.priority) }}</span></td>
+              <td>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="task.progress"></div>
+                  <span class="progress-text">{{ task.progress }}%</span>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

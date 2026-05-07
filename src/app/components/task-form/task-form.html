@@ -1,0 +1,74 @@
+<div class="task-form">
+  <h3>{{ editingTask() ? 'Editar Tarea' : 'Nueva Tarea' }}</h3>
+
+  <div class="form-group">
+    <label>Participante:</label>
+    <select [value]="selectedParticipantId()" (change)="onParticipantChange($event)">
+      <option value="">Seleccionar...</option>
+      @for (p of participants(); track p.id) {
+        <option [value]="p.id">{{ p.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Nombre de la tarea:</label>
+    <input type="text" [value]="taskName()" (input)="taskName.set($event.target.value)" placeholder="Nombre de la tarea">
+  </div>
+
+  <div class="form-group">
+    <label>Prioridad:</label>
+    <select [value]="priority()" (change)="onPriorityChange($event)">
+      <option value="high">Alta</option>
+      <option value="medium">Media</option>
+      <option value="low">Baja</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Fecha inicio:</label>
+    <input type="date" [value]="startDate()" (change)="startDate.set($event.target.value)">
+  </div>
+
+  <div class="form-group">
+    <label>Fecha fin:</label>
+    <input type="date" [value]="endDate()" (change)="endDate.set($event.target.value)">
+  </div>
+
+  <div class="form-group">
+    <label>Progreso: {{ progress() }}%</label>
+    <input type="range" min="0" max="100" [value]="progress()" (input)="progress.set(+$event.target.value)">
+  </div>
+
+  <div class="form-actions">
+    <button class="btn-primary" (click)="addTask()">
+      {{ editingTask() ? 'Actualizar' : 'Agregar' }}
+    </button>
+    @if (editingTask()) {
+      <button class="btn-secondary" (click)="cancelEdit()">Cancelar</button>
+    }
+  </div>
+
+  <!-- Task List -->
+  @if (participants().length > 0) {
+    <div class="task-list">
+      <h4>Tareas registradas:</h4>
+      @for (participant of participants(); track participant.id) {
+        @for (task of ganttServicePublic.getTasksForParticipant(participant.id)(); track trackByTaskId($index, task)) {
+          <div class="task-item" [style.border-left]="'4px solid ' + participant.color">
+            <div class="task-info">
+              <strong>{{ task.name }}</strong>
+              <span>{{ task.startDate | date:'shortDate' }} - {{ task.endDate | date:'shortDate' }}</span>
+              <span class="priority-badge" [class]="task.priority">{{ task.priority }}</span>
+              <span class="progress-badge">Progreso: {{ task.progress }}%</span>
+            </div>
+            <div class="task-actions">
+              <button class="btn-small" (click)="editTask(task)">Editar</button>
+              <button class="btn-small btn-danger" (click)="deleteTask(task.id)">×</button>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>
