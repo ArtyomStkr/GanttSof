@@ -71,4 +71,14 @@ export class GanttChart {
   trackByColumn(_: number, col: any) {
     return col.label + col.sublabel;
   }
+
+  editTask(task: GanttTask) {
+    const newProgress = prompt(`Editar progreso para: ${task.name}\nProgreso actual: ${task.progress}%`, task.progress.toString());
+    if (newProgress !== null) {
+      const progress = parseInt(newProgress, 10);
+      if (!isNaN(progress) && progress >= 0 && progress <= 100) {
+        this.ganttService.updateTask(task.id, { progress });
+      }
+    }
+  }
 }

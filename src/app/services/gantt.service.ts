@@ -163,7 +163,7 @@ export class GanttService {
     const scale = this.effectiveTimeScale();
 
     if (scale === 'days') {
-      const offset = Math.ceil((task.startDate.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+      const offset = Math.floor((task.startDate.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
       return offset * 30;
     }
 
@@ -273,65 +273,80 @@ export class GanttService {
     const participants = this.participants();
     const tasks = this.tasks();
     const timeColumns = this.timeColumns();
-    let totalWidth = 200 + timeColumns.reduce((sum, col) => sum + col.width, 0);
+    const totalTimelineWidth = timeColumns.reduce((sum, col) => sum + col.width, 0);
 
-    let html = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>${cfg.title}</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    h1 { text-align: center; color: ${cfg.textColor}; margin-bottom: 5px; }
-    .subtitle { text-align: center; color: #666; margin-bottom: 20px; }
-    .gantt-container { overflow-x: auto; }
-    .gantt-header { display: flex; background: ${cfg.headerColor}; border-bottom: 2px solid ${cfg.gridColor}; font-size: 11px; }
-    .gantt-row { display: flex; border-bottom: 1px solid ${cfg.gridColor}; align-items: center; min-height: ${cfg.barHeight + 10}px; }
-    .participant-col { width: 200px; min-width: 200px; padding: 5px; font-weight: bold; font-size: 12px; border-right: 1px solid ${cfg.gridColor}; }
-    .timeline { position: relative; flex: 1; height: 100%; border-left: 1px solid ${cfg.gridColor}; min-width: ${totalWidth - 200}px; }
-    .task-bar { position: absolute; height: ${cfg.barHeight}px; border-radius: ${cfg.barRadius}px; display: flex; align-items: center; justify-content: center; color: white; font-size: ${cfg.fontSize}px; overflow: hidden; white-space: nowrap; }
-    .time-column { display: inline-block; text-align: center; font-size: 10px; border-right: 1px solid ${cfg.gridColor}; padding: 5px 2px; }
-    @media print {
-      body { margin: 0; }
-      .gantt-container { overflow: visible; }
-      @page { size: landscape; }
-    }
-  </style>
-</head>
-<body>
-  <h1>${cfg.title}</h1>
-  <div class="subtitle">Corporación del Seguro Social Militar - COSSMIL</div>
-  <div class="gantt-container">
-    <div class="gantt-header">
-      <div class="participant-col">Participante / Tarea</div>
-      <div style="flex:1; display:flex;">`;
+    let html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + cfg.title + '</title><style>';
+    html += 'body { font-family: Arial, sans-serif; margin:0; padding:20px; }';
+    html += '* { box-sizing: border-box; }';
+    html += '.header { display: flex; align-items: center; margin-bottom: 10px; }';
+    html += '.header-left { flex: 1; text-align: left; }';
+    html += '.header-left h3 { margin: 0 0 5px 0; font-size: 16px; color: #333; text-transform: uppercase; font-weight: bold; }';
+    html += '.header-left h4 { margin: 0 0 5px 0; font-size: 16px; color: #666; font-weight: bold; }';
+    html += '.header-left h5 { margin: 0; font-size: 16px; color: #333; font-weight: bold; }';
+    html += '.header-center { flex: 1; text-align: center; }';
+    html += '.header-center h1 { margin: 0; font-size: 16px; font-weight: bold; text-transform: uppercase; color: ' + cfg.textColor + '; }';
+    html += '.header-right { flex: 1; text-align: right; }';
+    html += '.header-right img { height: 80px; width: auto; }';
+    html += '.gantt-container { width: ' + (200 + totalTimelineWidth) + 'px; }';
+    html += '.gantt-header { display: flex; background: ' + cfg.headerColor + '; border: 1px solid ' + cfg.gridColor + '; font-size: 11px; }';
+    html += '.gantt-row { display: flex; border-bottom: 1px solid ' + cfg.gridColor + '; border-left: 1px solid ' + cfg.gridColor + '; border-right: 1px solid ' + cfg.gridColor + '; min-height: ' + (cfg.barHeight + 20) + 'px; }';
+    html += '.participant-col { width: 200px; min-width: 200px; padding: 8px 5px; border-right: 1px solid ' + cfg.gridColor + '; display: flex; flex-direction: column; justify-content: center; font-size: 12px; font-weight: bold; }';
+    html += '.participant-name { font-size: 10px; opacity: 0.7; font-weight: normal; }';
+    html += '.timeline-header { display: flex; width: ' + totalTimelineWidth + 'px; }';
+    html += '.timeline { position: relative; width: ' + totalTimelineWidth + 'px; height: ' + (cfg.barHeight + 20) + 'px; }';
+    html += '.task-bar { position: absolute; height: ' + cfg.barHeight + 'px; border-radius: ' + cfg.barRadius + 'px; display: flex; align-items: center; justify-content: center; color: white; font-size: ' + cfg.fontSize + 'px; overflow: hidden; white-space: nowrap; top: 50%; transform: translateY(-50%); }';
+    html += '.time-col { display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid ' + cfg.gridColor + '; font-size: 10px; padding: 5px 2px; flex-shrink: 0; }';
+    html += '@media print { @page { size: landscape; margin: 10mm; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .task-bar { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }';
+    html += '</style></head><body>';
 
+    // Header with 3 sections
+    html += '<div class="header">';
+    // Left: Organization info
+    html += '<div class="header-left">';
+    html += '<h3>Corporación del Seguro Social Militar</h3>';
+    html += '<h4>Dirección Nacional de Tecnologías de la Información y Comunicación</h4>';
+    html += '<h5>BOLIVIA</h5>';
+    html += '</div>';
+    // Center: Title
+    html += '<div class="header-center">';
+    html += '<h1>' + cfg.title + '</h1>';
+    html += '</div>';
+    // Right: Large logo
+    html += '<div class="header-right">';
+    html += '<img src="' + window.location.origin + '/LOGO_COSSMIL.png" alt="COSSMIL Logo">';
+    html += '</div></div>';
+
+    // Gantt chart
+    html += '<div class="gantt-container">';
+
+    // Header row
+    html += '<div class="gantt-header">';
+    html += '<div class="participant-col" style="display: flex; align-items: center; justify-content: center;">TAREAS</div>';
+    html += '<div class="timeline-header">';
     for (const col of timeColumns) {
-      html += `<div class="time-column" style="width:${col.width}px;">${col.label}<br><span style="font-size:9px;color:#666;">${col.sublabel}</span></div>`;
+      html += '<div class="time-col" style="width:' + col.width + 'px;">' + col.label + '<br><span style="font-size:9px;color:#666;">' + col.sublabel + '</span></div>';
     }
+    html += '</div></div>';
 
-    html += `</div></div>`;
-
+    // Task rows
     for (const task of tasks) {
       const participant = participants.find(p => p.id === task.participantId);
       const left = this.getTaskLeft(task);
       const width = this.getTaskWidth(task);
       const color = task.color || participant?.color || '#3b82f6';
 
-      html += `<div class="gantt-row">
-        <div class="participant-col" style="color: ${participant?.color || '#333'};">
-          <div style="font-size:10px;opacity:0.7;">${participant?.name || 'Unknown'}</div>
-          <div>${task.name}</div>
-        </div>
-        <div class="timeline">
-          <div class="task-bar" style="left:${left}px; width:${width}px; background:${color}; top:5px;">
-            ${task.name} (${task.progress}%)
-          </div>
-        </div>
-      </div>`;
+      html += '<div class="gantt-row">';
+      html += '<div class="participant-col" style="color: ' + (participant?.color || '#333') + ';">';
+      html += '<div class="participant-name">' + (participant?.name || 'Unknown') + '</div>';
+      html += '<div>' + task.name + '</div>';
+      html += '</div>';
+      html += '<div class="timeline">';
+      html += '<div class="task-bar" style="left:' + left + 'px; width:' + width + 'px; background:' + color + ';">';
+      html += '<span style="padding: 0 5px;">' + task.name + ' (' + task.progress + '%)</span>';
+      html += '</div></div></div>';
     }
 
-    html += `</div></body></html>`;
+    html += '</div></body></html>';
     return html;
   }
 }

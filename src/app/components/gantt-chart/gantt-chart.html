@@ -26,10 +26,12 @@
           <span class="task-name">{{ task.name }}</span>
         </div>
         <div class="timeline-cell" [style.border-left]="config().showGrid ? '1px solid ' + config().gridColor : 'none'">
-          <div class="task-bar"
-               [style]="getTaskStyle(task)"
-               [style.border-radius.px]="config().barRadius"
-               [style.height.px]="config().barHeight">
+        <div class="task-bar"
+             [style]="getTaskStyle(task)"
+             [style.border-radius.px]="config().barRadius"
+             [style.height.px]="config().barHeight"
+             (click)="editTask(task)"
+             style="cursor: pointer;">
             <span class="task-label">{{ task.name }} ({{ task.progress }}%)</span>
             <div class="task-progress" [style.width.%]="task.progress" [style.background]="getParticipantColor(task.participantId) + '80'"></div>
           </div>
@@ -45,9 +47,6 @@
 
     <!-- Today marker -->
     @if (config().showToday && isTodayVisible()) {
-      <div class="today-marker"
-           [style.left.px]="getTodayLeft()">
-      </div>
     }
   </div>
 </div>

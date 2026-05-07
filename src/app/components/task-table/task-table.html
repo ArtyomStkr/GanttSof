@@ -28,7 +28,7 @@
               <td><span class="priority-badge" [class]="getPriorityClass(task.priority)">{{ getPriorityLabel(task.priority) }}</span></td>
               <td>
                 <div class="progress-bar">
-                  <div class="progress-fill" [style.width.%]="task.progress"></div>
+                  <div class="progress-fill" [style]="{ 'width': task.progress + '%', 'background-color': getParticipantColor(task.participantId) }"></div>
                   <span class="progress-text">{{ task.progress }}%</span>
                 </div>
               </td>

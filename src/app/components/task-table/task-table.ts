@@ -19,6 +19,10 @@ export class TaskTable {
     return this.participants().find(p => p.id === participantId)?.name || 'Unknown';
   }
 
+  getParticipantColor(participantId: string): string {
+    return this.participants().find(p => p.id === participantId)?.color || '#3b82f6';
+  }
+
   getPriorityLabel(priority: string): string {
     const labels: { [key: string]: string } = {
       'high': 'Alta',

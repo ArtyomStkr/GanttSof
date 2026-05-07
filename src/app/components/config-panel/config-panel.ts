@@ -56,12 +56,17 @@ export class ConfigPanel {
 
   printGantt() {
     const printContent = this.ganttService.generatePrintView();
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      printWindow.document.write(printContent);
-      printWindow.document.close();
-      printWindow.focus();
-      setTimeout(() => printWindow.print(), 500);
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write(printContent);
+      win.document.close();
+      win.focus();
+      setTimeout(() => {
+        win.print();
+        setTimeout(() => win.close(), 1000);
+      }, 1000);
+    } else {
+      alert('Por favor, permita ventanas emergentes para imprimir el diagrama.');
     }
   }
 
