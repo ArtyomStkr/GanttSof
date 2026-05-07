@@ -1,7 +1,7 @@
 <div class="app-container">
   <header class="app-header">
     <div class="header-content">
-      <img src="/LOGO_COSSMIL.png" alt="COSSMIL Logo" class="logo" [routerLink]="['/']">
+      <img src="./logo/LOGO_COSSMIL.png" alt="COSSMIL Logo" class="logo" [routerLink]="['/']">
       <div class="header-text">
         <h1>Generador de Diagramas Gantt - COSSMIL</h1>
         <p class="subtitle">Corporación del Seguro Social Militar</p>
@@ -25,11 +25,11 @@
 
       <div class="tab-content">
         @if (activeTab === 'participants') {
-          <app-participant-form />
+        <app-participant-form />
         } @else if (activeTab === 'tasks') {
-          <app-task-form />
+        <app-task-form />
         } @else if (activeTab === 'config') {
-          <app-config-panel />
+        <app-config-panel />
         }
       </div>
     </aside>
