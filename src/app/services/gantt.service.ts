@@ -313,7 +313,7 @@ export class GanttService {
     html += '</div>';
     // Right: Large logo
     html += '<div class="header-right">';
-    html += '<img src="' + window.location.origin + '/LOGO_COSSMIL.png" alt="COSSMIL Logo">';
+    html += '<img src="' + window.location.origin + './LOGO_COSSMIL.png" alt="COSSMIL Logo">';
     html += '</div></div>';
 
     // Gantt chart
