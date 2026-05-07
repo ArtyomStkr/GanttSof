@@ -24,6 +24,15 @@ export class GanttService {
     autoScale: true
   });
 
+  // Get the correct logo URL for the current environment
+  private getLogoUrl(): string {
+    // Get the base URL from the document base URI or window location
+    const baseUri = document.baseURI || window.location.href;
+    // Extract the base path (everything up to the last segment)
+    const baseUrl = baseUri.endsWith('/') ? baseUri : baseUri.substring(0, baseUri.lastIndexOf('/') + 1);
+    return baseUrl + 'logo/LOGO_COSSMIL.png';
+  }
+
   projectStartDate = computed(() => {
     const allDates = this.tasks().map(t => t.startDate);
     if (allDates.length === 0) return new Date();
@@ -311,9 +320,9 @@ export class GanttService {
     html += '<div class="header-center">';
     html += '<h1>' + cfg.title + '</h1>';
     html += '</div>';
-    // Right: Large logo
+    // Right: Large logo (use absolute URL for print view)
     html += '<div class="header-right">';
-    html += '<img src="./assets/logo/LOGO_COSSMIL.png" alt="COSSMIL Logo">';
+    html += '<img src="' + this.getLogoUrl() + '" alt="COSSMIL Logo">';
     html += '</div></div>';
 
     // Gantt chart
